@@ -1,0 +1,25 @@
+
+Hold Residues with B-factor_more_than_70
+5.0
+FIND
+CA * * *
+P * * *
+C2 * * *
+C4' * * *
+SEARCH
+RES 1 275
+RES 277
+RES 284 383
+END
+Hold Residues with B-factor_less_than_70
+2.0
+FIND
+CA * * *
+P * * *
+C2 * * *
+C4' * * *
+SEARCH
+RES 276
+RES 278 283
+END
+END

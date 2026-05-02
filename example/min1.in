@@ -1,0 +1,41 @@
+#Type of Simulation Being Done: Energy Minimization, Stage2
+ &cntrl
+  ntxo=2, IOUTFM=1, !NetCDF Binary Format.
+  imin=1, !Energy Minimization
+  maxcyc=5000, !Total Minimization Cycles to be run. Steepest Decent First, then Conjugate Gradient Method if ncyc < maxcyc
+  ncyc=2500, !Number of Steepest Decent Minimization Steps to run before switching to Conjugate Gradient
+  cut=10.0, !Cut Off Distance for Non-Bounded Interactions
+  igb=0, !No Generalized Born
+  ntp=0, !No pressure scaling (Default)
+  ntb=1, !Constant Volume. (default when igb and ntp are both 0, which are their defaults)
+  ntf=1, !Complete Interactions are Calculated
+  ntc=1, !SHAKE is NOT performed, DEFAULT
+  ntpr=10, !Every 10 steps, energy information will be printed in human-readable form to files "mdout" and "mdinfo"
+  ntwx=100, !Every 100 steps, the coordinates will be written to the mdcrd file
+  ntwr=100, !Every 100 steps during dynamics, the restart file will be written, ensuring that recovery from a crash will not be so painful. #If ntwr < 0, a unique copy of the file, "restrt_<nstep>", is written every abs(ntwr) steps
+  ntr=1, !Turn ON (Cartesian) Restraints
+/
+Hold Residues with B-factor_more_than_70
+10.0
+FIND
+CA * * *
+P * * *
+C2 * * *
+C4' * * *
+SEARCH
+RES 1 275
+RES 277
+RES 284 383
+END
+Hold Residues with B-factor_less_than_70
+2.0
+FIND
+CA * * *
+P * * *
+C2 * * *
+C4' * * *
+SEARCH
+RES 276
+RES 278 283
+END
+END

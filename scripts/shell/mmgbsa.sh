@@ -1,0 +1,58 @@
+#!/bin/bash
+
+# Variables used:
+# - cpptraj: directory for generated cpptraj input/log files, inherited.
+# - topfile: AMBER topology file (.parm7), inherited.
+# - md_NPT: production MD output directory containing md_NPT.nc, inherited.
+# - mmgbsa: directory for MMGBSA intermediate and result files, inherited.
+# - complex_range: residue range for the whole complex, inherited from selection.sh.
+# - peptide_range: residue range for the peptide chain, inherited from selection.sh.
+# - param: directory containing mmgbsa.in and other shared parameter files, inherited.
+# - run_container: helper function for running AMBER tools in Singularity, inherited.
+# - start/end/elapsed: timestamps used for runtime reporting.
+
+echo "Starting MMGBSA run at $(date)"
+start=$(date +%s)  # Record start time in minutes
+
+# Wrapping the trajectory
+# ========wrap.in=============
+cat > "$cpptraj/wrap.in" <<EOF
+parm $topfile
+trajin $md_NPT/md_NPT.nc
+autoimage :$complex_range
+trajout $mmgbsa/trajectory_wrapped.dcd DCD nobox
+run
+quit
+EOF
+# ==========================
+run_container "cpptraj -i $cpptraj/wrap.in" > "$mmgbsa/wrap.log" 2>&1
+
+rm -f "$mmgbsa/complex.parm7" "$mmgbsa/receptor.parm7" "$mmgbsa/ligand.parm7"
+
+run_container "ante-MMPBSA.py -p $topfile \
+  -c $mmgbsa/complex.parm7 -r $mmgbsa/receptor.parm7 -l $mmgbsa/ligand.parm7 \
+  -s '!(:$complex_range)' -m '!(:$peptide_range)'" \
+  > "$mmgbsa/ante-MMPBSA.log" 2>&1
+# -s '!(:1-383)'  This is the mask for creating the complex file without the solvent
+# -m '!(:276-284)' This is the mask for creating the ligand part and the remaining for the receptor part
+
+# Fail fast if the parm7 files were not produced
+for parm7 in "$mmgbsa/complex.parm7" "$mmgbsa/receptor.parm7" "$mmgbsa/ligand.parm7"; do
+  if [[ ! -s "$parm7" ]]; then
+    echo "ERROR: Expected file not created: $parm7" >&2
+    exit 1
+  fi
+done
+
+run_container "mpirun -np 4 MMPBSA.py.MPI -O \
+  -i $param/mmgbsa.in -o $mmgbsa/result_mmgbsa.dat -sp $topfile \
+  -cp $mmgbsa/complex.parm7 -rp $mmgbsa/receptor.parm7 -lp $mmgbsa/ligand.parm7 \
+  -y $mmgbsa/trajectory_wrapped.dcd \
+  -do $mmgbsa/mmgbsa.do -eo $mmgbsa/mmgbsa.eo -deo $mmgbsa/mmgbsa.deo" \
+  > "$mmgbsa/mmgbsa.log" 2>&1
+
+end=$(date +%s)  # Record end time in minutes
+elapsed=$((end - start))  # Compute total time
+
+echo "MMGBSA run completed at $(date)"
+report_elapsed "MMGBSA" "$elapsed"
