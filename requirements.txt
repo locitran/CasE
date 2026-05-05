@@ -1,0 +1,9 @@
+# Core scientific Python packages used by analysis/plotting scripts
+numpy
+pandas
+matplotlib
+
+# Structure and trajectory analysis
+MDAnalysis
+biopython
+ProDy

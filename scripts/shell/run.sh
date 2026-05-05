@@ -5,7 +5,7 @@
 #SBATCH --ntasks=4                          # MPI tasks
 #SBATCH --cpus-per-task=10                  # CPUs per task
 #SBATCH --mem=64gb                          # Job memory request
-#SBATCH --gres=gpu:3g.20gb:1                 # Use 2 GPUs
+#SBATCH --gres=gpu:2g.10gb:2                 # Use 2 GPUs
 #SBATCH --output=/mnt/nas_1/YangLab/loci/casE/slurm_log/run_%j.out
 #SBATCH --error=/mnt/nas_1/YangLab/loci/casE/slurm_log/run_%j.err
 #SBATCH --partition=COMPUTE1Q               # The partition that job submit to
@@ -61,64 +61,64 @@ singularity exec --nv -B /raid -B "$workdir" /raid/images/amber20.sif \
 }
 
 # CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5
-for variant in CasE_14_P2V3; do
+for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5; do
   export variant
   input_dir=$workdir/data/input/af/$variant
   output_dir=$workdir/data/output/$variant
-  # source $workdir/scripts/shell/af3.sh
+  source $workdir/scripts/shell/af3.sh
 
-  for type in wt mut; do
-    input_cif=$workdir/data/output/$variant/$type/"$type"_model.cif
-    input_pdb=$workdir/data/output/$variant/$type/"$type"_model.pdb
+  # for type in wt mut; do
+  #   input_cif=$workdir/data/output/$variant/$type/"$type"_model.cif
+  #   input_pdb=$workdir/data/output/$variant/$type/"$type"_model.pdb
 
-    outdir=$workdir/data/output/$variant/"$type"_md
-    mkdir -p $output_dir
+  #   outdir=$workdir/data/output/$variant/"$type"_md
+  #   mkdir -p $output_dir
 
-    console=$outdir/console
-    cpptraj=$outdir/cpptraj
-    analysis=$outdir/analysis
-    mmgbsa=$outdir/mmgbsa
-    param=$workdir/data/param
+  #   console=$outdir/console
+  #   cpptraj=$outdir/cpptraj
+  #   analysis=$outdir/analysis
+  #   mmgbsa=$outdir/mmgbsa
+  #   param=$workdir/data/param
 
-    tleap=$outdir/tleap
-    config=$outdir/config
-    em=$outdir/em
-    heat=$outdir/heat
-    equi_NVT=$outdir/equi_NVT
-    equi_NPT=$outdir/equi_NPT
-    md_NPT=$outdir/md_NPT
+  #   tleap=$outdir/tleap
+  #   config=$outdir/config
+  #   em=$outdir/em
+  #   heat=$outdir/heat
+  #   equi_NVT=$outdir/equi_NVT
+  #   equi_NPT=$outdir/equi_NPT
+  #   md_NPT=$outdir/md_NPT
 
-    topfile=$outdir/protein_solv_ions.parm7
-    coordfile=$outdir/protein_solv_ions.crd
-    output_pdb=$outdir/protein_solv_ions.pdb
+  #   topfile=$outdir/protein_solv_ions.parm7
+  #   coordfile=$outdir/protein_solv_ions.crd
+  #   output_pdb=$outdir/protein_solv_ions.pdb
 
-    # Create folder if not exist
-    mkdir -p "$outdir" "$cpptraj" "$analysis" "$mmgbsa" "$em" "$heat" "$equi_NVT" "$equi_NPT" "$md_NPT" "$config" "$tleap"
-    export outdir cpptraj analysis mmgbsa topfile coordfile em heat equi_NVT equi_NPT md_NPT tleap config
+  #   # Create folder if not exist
+  #   mkdir -p "$outdir" "$cpptraj" "$analysis" "$mmgbsa" "$em" "$heat" "$equi_NVT" "$equi_NPT" "$md_NPT" "$config" "$tleap"
+  #   export outdir cpptraj analysis mmgbsa topfile coordfile em heat equi_NVT equi_NPT md_NPT tleap config
 
-    ##############################################################################
-    # System preparation
-    source $workdir/scripts/shell/pdb4amber.sh
-    source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
-    source $workdir/scripts/shell/tleap.sh
+  #   ##############################################################################
+  #   # System preparation
+  #   source $workdir/scripts/shell/pdb4amber.sh
+  #   source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
+  #   source $workdir/scripts/shell/tleap.sh
 
-    # # Create configuration files (.in)
-    python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
+  #   # # Create configuration files (.in)
+  #   python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
 
-    # Run MD
-    cd $md_NPT
-    source $workdir/scripts/shell/md.sh
+  #   # Run MD
+  #   cd $md_NPT
+  #   source $workdir/scripts/shell/md.sh
 
-    # Run check MD results
-    source $workdir/scripts/shell/check.sh
+  #   # Run check MD results
+  #   source $workdir/scripts/shell/check.sh
 
-    # Run Analysis
-    cd $analysis
-    source $workdir/scripts/shell/analysis.sh
+  #   # Run Analysis
+  #   cd $analysis
+  #   source $workdir/scripts/shell/analysis.sh
 
-    # Run MMGBSA
-    cd $mmgbsa
-    source $workdir/scripts/shell/mmgbsa.sh
+  #   # Run MMGBSA
+  #   cd $mmgbsa
+  #   source $workdir/scripts/shell/mmgbsa.sh
     
-  done
+  # done
 done

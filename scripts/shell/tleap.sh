@@ -1,15 +1,5 @@
 #!/bin/bash
 
-# Variables used:
-# - outdir: output directory for the current variant/type, inherited.
-# - tleap: directory for generated tleap input/log files, inherited.
-# - topfile/coordfile/output_pdb: final AMBER output file paths, inherited.
-# - run_container: helper function for running AMBER tools in Singularity, inherited.
-# - water_num: number of water residues parsed from the temporary tleap log.
-# - n_ions: estimated number of NaCl ion pairs for the target salt concentration.
-# - sslink_file: file listing disulfide-bonded cysteine residue pairs.
-# - start/end/elapsed: timestamps used for runtime reporting.
-
 get_water_numbers() {
   local leap_file=$1
   awk '/Added [0-9]+ residues\./ {print $2; exit}' "$leap_file"
@@ -18,8 +8,19 @@ get_water_numbers() {
 echo "Starting tleap prepare run at $(date)"
 start=$(date +%s)  # Record start time in minutes
 
+if [[ -s "$topfile" && -s "$coordfile" && -s "$output_pdb" ]]; then
+    echo "Found existing tleap outputs; skipping tleap preparation"
+    echo "  topfile: $topfile"
+    echo "  coordfile: $coordfile"
+    echo "  output_pdb: $output_pdb"
+    end=$(date +%s)
+    elapsed=$((end - start))
+    report_elapsed "tleap" "$elapsed"
+    return 0
+fi
+
 # 1/ Get number of water molecules
-cat >> $tleap/count_water.in <<EOF
+cat > $tleap/count_water.in <<EOF
 source leaprc.protein.ff14SB
 source leaprc.water.tip3p
 protein = loadpdb $outdir/noh_propka.pdb
@@ -36,7 +37,7 @@ read -r water_num < <(get_water_numbers $tleap/count_water.log)
 n_ions=$(printf "%.0f\n" "$(echo "0.15 * $water_num / (1000 / 18.08)" | bc -l)")
 
 # 3/ Add ions to achieve 0.15M Salt Concentration 
-cat >> $tleap/build_system.in <<EOF
+cat > $tleap/build_system.in <<EOF
 source leaprc.protein.ff14SB
 source leaprc.water.tip3p
 protein = loadpdb $outdir/noh_propka.pdb

@@ -1,17 +1,4 @@
 #!/bin/bash
-
-# Variables used:
-# - cpptraj: directory for generated cpptraj input/log files, inherited.
-# - topfile: AMBER topology file (.parm7), inherited.
-# - md_NPT: production MD output directory containing md_NPT.nc, inherited.
-# - mmgbsa: directory for MMGBSA intermediate and result files, inherited.
-# - complex_range: residue range for the whole complex, inherited from selection.sh.
-# - peptide_range: residue range for the peptide chain, inherited from selection.sh.
-# - param: directory containing mmgbsa.in and other shared parameter files, inherited.
-# - workdir: project root containing scripts/python/parseMMGBSA.py, inherited.
-# - run_container: helper function for running AMBER tools in Singularity, inherited.
-# - start/end/elapsed: timestamps used for runtime reporting.
-
 echo "Starting MMGBSA run at $(date)"
 start=$(date +%s)  # Record start time in minutes
 
@@ -45,7 +32,7 @@ for parm7 in "$mmgbsa/complex.parm7" "$mmgbsa/receptor.parm7" "$mmgbsa/ligand.pa
   fi
 done
 
-run_container "mpirun -np 4 MMPBSA.py.MPI -O \
+run_container "mpirun -np ${SLURM_NTASKS:-4} MMPBSA.py.MPI -O \
   -i $param/mmgbsa.in -o $mmgbsa/result_mmgbsa.dat -sp $topfile \
   -cp $mmgbsa/complex.parm7 -rp $mmgbsa/receptor.parm7 -lp $mmgbsa/ligand.parm7 \
   -y $mmgbsa/trajectory_wrapped.dcd \
