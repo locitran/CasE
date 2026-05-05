@@ -29,7 +29,7 @@ for ch in chains:
 
 # CasE peptide: chain C
 complex_range = f"{starts[chains[0]]}-{ends[chains[2]]}"
-peptide_range = f"{starts[chains[1]]}-{ends[chains[1]]}"
+peptide_range = f"{starts[chains[2]]}-{ends[chains[2]]}"
 
 print(complex_range, peptide_range)
 PY

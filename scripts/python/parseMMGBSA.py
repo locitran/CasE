@@ -264,8 +264,8 @@ def main():
     default_names = {
         "summary": "result_mmgbsa.json",
         "per-frame": "mmgbsa_energy_frames.csv",
-        "per-residue": "mmgbsa_decomp.csv",
-        "per-residue-pair": "mmgbsa_frame_decomp.csv",
+        "per-residue": "per-residue.csv",
+        "per-residue-pair": "per-residue-pair.csv",
     }
     output = args.output or os.path.join(os.path.dirname(args.input), default_names[kind])
 

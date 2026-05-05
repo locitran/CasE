@@ -5,7 +5,7 @@
 #SBATCH --ntasks=4                          # MPI tasks
 #SBATCH --cpus-per-task=10                  # CPUs per task
 #SBATCH --mem=64gb                          # Job memory request
-#SBATCH --gres=gpu:3g.20gb:1                 # Use 2 GPUs
+#SBATCH --gres=gpu:1g.5gb:1                 # Use 2 GPUs
 #SBATCH --output=/mnt/nas_1/YangLab/loci/casE/slurm_log/run_%j.out
 #SBATCH --error=/mnt/nas_1/YangLab/loci/casE/slurm_log/run_%j.err
 #SBATCH --partition=COMPUTE1Q               # The partition that job submit to
@@ -58,9 +58,8 @@ singularity exec --nv -B /raid -B "$workdir" /raid/images/amber20.sif \
     bash -lc "source /usr/local/amber20/amber.sh; $*"
 }
 
-#  HLA-B-AAAAAAAAL HLA-B-EDEDEDEDE HLA-B-GGGGGGGGG
-for sample in HLA-B-EDEDEDEDE ; do
-# for sample in  HLA-B-16072718; do
+#  HLA-B-AAAAAAAAL HLA-B-EDEDEDEDE 
+for sample in HLA-B-GGGGGGGGG ; do
   input_dir=$workdir/data/input/control/negative
   output_dir=$workdir/data/output/control/negative
 
@@ -95,11 +94,7 @@ for sample in HLA-B-EDEDEDEDE ; do
 
   ###############################################################################
   # System preparation
-  if [[ -f "$outdir/noh_propka.pdb" ]]; then
-    echo "Found existing $outdir/noh_propka.pdb; skipping pdb4amber.sh"
-  else
-    source $workdir/scripts/shell/pdb4amber.sh
-  fi
+  source $workdir/scripts/shell/pdb4amber.sh
   source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
   source $workdir/scripts/shell/tleap.sh
 

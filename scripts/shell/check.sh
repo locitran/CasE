@@ -18,32 +18,29 @@ start=$(date +%s)  # Record start time in minutes
 # check data of our system
 mdout_files=("$em/min0.out" "$em/min1.out" "$em/min2.out" "$heat/heat.out" "$equi_NVT/equi_NVT.out" "$equi_NPT/equi_NPT.out" "$md_NPT/md_NPT.out")
 count=0
-{
-  for input_file in "${mdout_files[@]}"; do
-    if [[ -f "$input_file" ]]; then
-      base=$(basename "$input_file" .out)
-      echo "readdata $input_file name ${base}_out"
-      ((count++))
+
+for input_file in "${mdout_files[@]}"; do
+  if [[ -f "$input_file" ]]; then
+    ((count += 1))
+    base=$(basename "$input_file" .out)
+    stage_input="$cpptraj/readOut_${base}.in"
+    stage_log="$cpptraj/readOut_${base}.log"
+
+    cat > "$stage_input" <<EOF
+readdata $input_file name ${base}_out
+writedata ${input_file%.out}_all.dat ${base}_out[*]
+run
+quit
+EOF
+
+    echo "run cpptraj of $stage_input"
+    if ! run_container cpptraj -i "$stage_input" > "$stage_log" 2>&1; then
+      echo "Warning: cpptraj failed for $input_file; see $stage_log"
     fi
-  done
+  fi
+done
 
-  echo
-
-  for input_file in "${mdout_files[@]}"; do
-    if [[ -f "$input_file" ]]; then
-      base=$(basename "$input_file" .out)
-      echo "writedata ${input_file%.out}_all.dat ${base}_out[*]"
-    fi
-  done
-
-  echo "run"
-  echo "quit"
-} > "$cpptraj/readOut.in"
-
-if (( count > 0 )); then
-  echo "run cpptraj of $cpptraj/readOut.in"
-  run_container cpptraj -i "$cpptraj/readOut.in" > "$cpptraj/readOut.log" 2>&1
-else
+if (( count == 0 )); then
   echo "Warning: no mdout files found"
 fi
 

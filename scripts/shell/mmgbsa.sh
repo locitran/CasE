@@ -26,7 +26,7 @@ run
 quit
 EOF
 # ==========================
-run_container "cpptraj -i $cpptraj/wrap.in" > "$mmgbsa/wrap.log" 2>&1
+run_container "cpptraj -i $cpptraj/wrap.in" > "$cpptraj/wrap.log" 2>&1
 
 rm -f "$mmgbsa/complex.parm7" "$mmgbsa/receptor.parm7" "$mmgbsa/ligand.parm7"
 
@@ -54,9 +54,9 @@ run_container "mpirun -np 4 MMPBSA.py.MPI -O \
 
 echo "Parsing MMGBSA output files at $(date)"
 python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/result_mmgbsa.dat"  --kind summary          -o "$mmgbsa/result_mmgbsa.json"
-python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.eo"          --kind per-frame        -o "$mmgbsa/mmgbsa_energy_frames.csv"
-python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.do"          --kind per-residue      -o "$mmgbsa/mmgbsa_decomp.csv"
-python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.deo"         --kind per-residue-pair -o "$mmgbsa/mmgbsa_frame_decomp.csv"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.eo"          --kind per-frame        -o "$mmgbsa/per-frame.csv"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.do"          --kind per-residue      -o "$mmgbsa/per-residue.csv"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.deo"         --kind per-residue-pair -o "$mmgbsa/per-residue-pair.csv"
 
 end=$(date +%s)  # Record end time in minutes
 elapsed=$((end - start))  # Compute total time
