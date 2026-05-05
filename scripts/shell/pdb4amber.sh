@@ -17,7 +17,7 @@ python -c "from prody import parsePDB, writePDB; p = parsePDB('$input_cif'); wri
 # 1/ Preparation with pdb4amber + propka3
 cd $outdir
 run_container pdb4amber -i $input_pdb -o $outdir/noh.pdb # Parsing our PDB file using pdb4amber
-propka3 $outdir/noh.pdb # Calculating the Protonation state of residues
+propka3 $outdir/noh.pdb --pH 7.0 # Calculating the Protonation state of residues
 python3 $workdir/scripts/python/protonate_pka.py $outdir/noh.pka $outdir/noh.pdb $outdir/noh_propka.pdb # Edit the residue name based on its pKa
 cd $workdir
 

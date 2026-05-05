@@ -8,6 +8,7 @@
 # - complex_range: residue range for the whole complex, inherited from selection.sh.
 # - peptide_range: residue range for the peptide chain, inherited from selection.sh.
 # - param: directory containing mmgbsa.in and other shared parameter files, inherited.
+# - workdir: project root containing scripts/python/parseMMGBSA.py, inherited.
 # - run_container: helper function for running AMBER tools in Singularity, inherited.
 # - start/end/elapsed: timestamps used for runtime reporting.
 
@@ -50,6 +51,12 @@ run_container "mpirun -np 4 MMPBSA.py.MPI -O \
   -y $mmgbsa/trajectory_wrapped.dcd \
   -do $mmgbsa/mmgbsa.do -eo $mmgbsa/mmgbsa.eo -deo $mmgbsa/mmgbsa.deo" \
   > "$mmgbsa/mmgbsa.log" 2>&1
+
+echo "Parsing MMGBSA output files at $(date)"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/result_mmgbsa.dat"  --kind summary          -o "$mmgbsa/result_mmgbsa.json"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.eo"          --kind per-frame        -o "$mmgbsa/mmgbsa_energy_frames.csv"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.do"          --kind per-residue      -o "$mmgbsa/mmgbsa_decomp.csv"
+python "$workdir/scripts/python/parseMMGBSA.py" -i "$mmgbsa/mmgbsa.deo"         --kind per-residue-pair -o "$mmgbsa/mmgbsa_frame_decomp.csv"
 
 end=$(date +%s)  # Record end time in minutes
 elapsed=$((end - start))  # Compute total time

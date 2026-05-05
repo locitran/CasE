@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=16072718                      # Job name
+#SBATCH --job-name=control                      # Job name
 #SBATCH --mail-type=BEGIN                   # Mail events (NONE, BEGIN, END, FAIL, ALL)
 #SBATCH --mail-user=xxx@gmail.com  # Where to send mail
 #SBATCH --ntasks=4                          # MPI tasks
@@ -52,61 +52,71 @@ report_elapsed() {
   echo "==================================="
 }
 
+workdir=/mnt/nas_1/YangLab/loci/casE
 run_container() {
 singularity exec --nv -B /raid -B "$workdir" /raid/images/amber20.sif \
     bash -lc "source /usr/local/amber20/amber.sh; $*"
 }
 
-########################Set up environment#########################
-workdir=/mnt/nas_1/YangLab/loci/casE
+# HLA-B-16072718 HLA-B-AAAAAAAAL HLA-B-EDEDEDEDE
+for sample in  HLA-B-GGGGGGGGG; do
+# for sample in  HLA-B-16072718; do
+  input_dir=$workdir/data/input/control/negative
+  output_dir=$workdir/data/output/control/negative
 
-sample=HLA-B-16072718
-input_dir=$workdir/data/input/control/negative/$sample
-output_dir=$workdir/data/output/control/negative/$sample
+  # source $workdir/scripts/shell/af3.sh
+  # cp -r $input_dir "$output_dir"/af3_json 
+  ######################## RUN #########################
+  input_cif=$workdir/data/output/control/negative/$sample/"$sample"_model.cif
+  input_pdb=$workdir/data/output/control/negative/$sample/"$sample"_model.pdb
 
-# source $workdir/scripts/shell/af3.sh
+  outdir=$workdir/data/output/control/negative/$sample/md
+  console=$outdir/console
+  cpptraj=$outdir/cpptraj
+  analysis=$outdir/analysis
+  mmgbsa=$outdir/mmgbsa
+  param=$workdir/data/param
 
-######################## RUN #########################
-input_cif=$workdir/data/output/control/negative/$sample/wt/wt.cif
-input_pdb=$workdir/data/output/control/negative/$sample/wt/wt.pdb
+  tleap=$outdir/tleap
+  config=$outdir/config
+  em=$outdir/em
+  heat=$outdir/heat
+  equi_NVT=$outdir/equi_NVT
+  equi_NPT=$outdir/equi_NPT
+  md_NPT=$outdir/md_NPT
 
-outdir=$workdir/data/output/control/negative/$sample/wt/wt_md
-console=$outdir/console
-cpptraj=$outdir/cpptraj
-analysis=$outdir/analysis
-mmgbsa=$outdir/mmgbsa
-param=$workdir/data/param
+  topfile=$outdir/protein_solv_ions.parm7
+  coordfile=$outdir/protein_solv_ions.crd
+  output_pdb=$outdir/protein_solv_ions.pdb
 
-tleap=$outdir/tleap
-config=$outdir/config
-em=$outdir/em
-heat=$outdir/heat
-equi_NVT=$outdir/equi_NVT
-equi_NPT=$outdir/equi_NPT
-md_NPT=$outdir/md_NPT
+  # Create folder if not exist
+  mkdir -p "$outdir" "$cpptraj" "$analysis" "$mmgbsa" "$em" "$heat" "$equi_NVT" "$equi_NPT" "$md_NPT" "$config" "$tleap"
+  export outdir cpptraj analysis mmgbsa topfile coordfile em heat equi_NVT equi_NPT md_NPT tleap config
 
-topfile=$outdir/protein_solv_ions.parm7
-coordfile=$outdir/protein_solv_ions.crd
-output_pdb=$outdir/protein_solv_ions.pdb
+  ###############################################################################
+  # System preparation
+  # source $workdir/scripts/shell/pdb4amber.sh
+  # source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
+  # source $workdir/scripts/shell/tleap.sh
 
-# Create folder if not exist
-mkdir -p "$outdir" "$cpptraj" "$analysis" "$mmgbsa" "$em" "$heat" "$equi_NVT" "$equi_NPT" "$md_NPT" "$config" "$tleap"
-export outdir cpptraj analysis mmgbsa topfile coordfile em heat equi_NVT equi_NPT md_NPT tleap config
+  # # # Create configuration files (.in)
+  # python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
 
-###############################################################################
-# System preparation
-source $workdir/scripts/shell/pdb4amber.sh
-source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
-source $workdir/scripts/shell/tleap.sh
+  # # Run MD
+  # cd $md_NPT
+  # source $workdir/scripts/shell/md.sh
 
-# # Create configuration files (.in)
-python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
+  # Run check MD results
+  source $workdir/scripts/shell/check.sh
 
-# # Run MD
-source $workdir/scripts/shell/md.sh
+  # # Run Analysis
+  # cd $analysis
+  # source $workdir/scripts/shell/analysis.sh
 
-# # Run Analysis
-source $workdir/scripts/shell/analysis.sh
+  # # Run MMGBSA
+  # cd $mmgbsa
+  # source $workdir/scripts/shell/mmgbsa.sh
 
-# Run MMGBSA
-source $workdir/scripts/shell/mmgbsa.sh
+done
+
+# bash /mnt/nas_1/YangLab/loci/casE/scripts/shell/control.sh > test.log 2>&1

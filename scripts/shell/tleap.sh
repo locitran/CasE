@@ -10,28 +10,6 @@
 # - sslink_file: file listing disulfide-bonded cysteine residue pairs.
 # - start/end/elapsed: timestamps used for runtime reporting.
 
-report_elapsed() {
-  local label=$1
-  local elapsed=$2
-  local elapsed_text
-
-  if (( elapsed >= 3600 )); then
-    elapsed_text=$(awk -v s="$elapsed" 'BEGIN { h = s / 3600; unit = (h < 1.5 ? "hour" : "hours"); printf "%.2f %s", h, unit }')
-  elif (( elapsed >= 60 )); then
-    elapsed_text=$(awk -v s="$elapsed" 'BEGIN { m = s / 60; unit = (m < 1.5 ? "minute" : "minutes"); printf "%.2f %s", m, unit }')
-  else
-    if (( elapsed == 1 )); then
-      elapsed_text="1 second"
-    else
-      elapsed_text="${elapsed} seconds"
-    fi
-  fi
-
-  echo "==================================="
-  echo "Elapsed Time of \"$label\": $elapsed_text"
-  echo "==================================="
-}
-
 get_water_numbers() {
   local leap_file=$1
   awk '/Added [0-9]+ residues\./ {print $2; exit}' "$leap_file"
