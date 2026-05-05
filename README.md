@@ -1,0 +1,40 @@
+# Install miniconda in FIR
+
+```bash
+cd ~/scratch
+bash Miniconda3-latest-Linux-x86_64.sh -b -p ~/scratch/miniconda3
+source ~/scratch/miniconda3/etc/profile.d/conda.sh
+conda --version
+conda create -n case python=3.11 -y
+conda activate case
+pip install -r ~/scratch/CasE/requirements.txt
+```
+
+# Alternative: use Python venv in FIR
+
+If you do not want to use conda, create a regular Python virtual environment:
+
+```bash
+cd ~/scratch/CasE
+python -m venv ~/scratch/case-venv
+source ~/scratch/case-venv/bin/activate
+python -m pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+Then activate it in the Slurm script before running Python scripts:
+
+```bash
+source ~/scratch/case-venv/bin/activate
+which python
+python --version
+which propka3
+```
+
+# Monitor job
+
+```bash
+squeue -u $USER
+tail -f case_wt_md-<jobid>.out
+tail -f case_wt_md-<jobid>.err
+```

@@ -7,3 +7,4 @@ matplotlib
 MDAnalysis
 biopython
 ProDy
+propka

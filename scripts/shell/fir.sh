@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=case_wt_md
 #SBATCH --account=def-mikeuoft          # <-- change to your allocation
-#SBATCH --time=0-4:00
+#SBATCH --time=1-1:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
@@ -9,6 +9,8 @@
 #SBATCH --gres=gpu:nvidia_h100_80gb_hbm3_1g.10gb:1
 #SBATCH --output=%x-%j.out
 #SBATCH --error=%x-%j.err
+
+set -euo pipefail # stops on the first failure.
 
 #####################################################################################
 echo "> SLURM job resources"
@@ -26,17 +28,28 @@ module purge
 module load apptainer
 module load StdEnv/2023 gcc/12.3 openmpi/4.1.5 cuda/12.6 amber-pmemd/24.3
 
-echo "> Amber tool paths"
-which pmemd.cuda_DPFP || true
-which pmemd.cuda_SPFP || true
-which tleap || true
-which cpptraj || true
-which pdb4amber || true
-which ante-MMPBSA.py || true
-which MMPBSA.py.MPI || true
-which mpirun || true
+venv_path=~/scratch/case-venv/bin/activate
+if [[ ! -s "$venv_path" ]]; then
+  echo "ERROR: Python virtual environment not found: $venv_path" >&2
+  echo "Create it with: python -m venv ~/scratch/case-venv && source ~/scratch/case-venv/bin/activate && pip install -r ~/scratch/CasE/requirements.txt" >&2
+  exit 1
+fi
+source "$venv_path"
 
-set -euo pipefail # stops on the first failure.
+echo "> Python environment"
+which python
+python --version
+which propka3
+
+echo "> Amber tool paths"
+which pmemd.cuda_DPFP
+which pmemd.cuda_SPFP
+which tleap
+which cpptraj
+which pdb4amber
+which ante-MMPBSA.py
+which MMPBSA.py.MPI
+which mpirun
 
 report_elapsed() {
   local label=$1
@@ -71,7 +84,7 @@ run_container() {
   fi
 }
 
-for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5; do
+for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3; do
   export variant
   input_dir=$workdir/data/input/af/$variant
   output_dir=$workdir/data/output/$variant
