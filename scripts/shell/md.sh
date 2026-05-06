@@ -11,6 +11,15 @@
 echo "Starting MD run at $(date)"
 start=$(date +%s)  # Record start time in minutes
 
+if [[ -f "$md_NPT/md_NPT.out" ]]; then
+    echo "Found existing MD output: $md_NPT/md_NPT.out"
+    echo "Skipping MD run."
+    end=$(date +%s)
+    elapsed=$((end - start))
+    report_elapsed "MD" "$elapsed"
+    return 0 2>/dev/null || exit 0
+fi
+
 run_md_stage() {
     local stage_name=$1
     local log_file=$2

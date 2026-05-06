@@ -117,7 +117,8 @@ for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5;
     source $workdir/scripts/shell/analysis.sh
 
     # Run MMGBSA
-    cd $mmgbsa
+    mkdir -p $mmgbsa/temp
+    cd $mmgbsa/temp
     source $workdir/scripts/shell/mmgbsa.sh
     
   done

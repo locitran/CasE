@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=case_wt_md
 #SBATCH --account=def-mikeuoft          # <-- change to your allocation
-#SBATCH --time=1-1:00
+#SBATCH --time=2-0:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=4
@@ -125,8 +125,12 @@ for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5;
     source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
     source $workdir/scripts/shell/tleap.sh
 
-    # # Create configuration files (.in)
-    python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
+    # Create configuration files (.in), unless the config folder is already populated.
+    if compgen -G "$config/*" > /dev/null; then
+      echo "Config files already exist in $config; skipping create_config.py"
+    else
+      python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
+    fi
 
     # Run MD
     cd $md_NPT
@@ -140,7 +144,8 @@ for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5;
     source $workdir/scripts/shell/analysis.sh
 
     # Run MMGBSA
-    cd $mmgbsa
+    mkdir -p $mmgbsa/temp
+    cd $mmgbsa/temp
     source $workdir/scripts/shell/mmgbsa.sh
     
   done

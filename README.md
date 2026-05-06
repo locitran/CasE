@@ -61,3 +61,12 @@ If you are already inside `~/scratch/CasE/data`, use:
 ```bash
 scp -r yang_loci@140.114.97.192:/mnt/nas_1/YangLab/loci/casE/data/output/CasE_14_P2V1 ./output/
 ```
+
+# Copy data from FIR to A100 with scp
+
+Run this on FIR to copy `CasE_14_P2V1` back to the A100 repo:
+
+```bash
+scp -r /home/locitran/scratch/CasE/data/fir/CasE_14_P2V1 \
+  yang_loci@140.114.97.192:/mnt/nas_1/YangLab/loci/casE/data/fir/
+```
