@@ -29,7 +29,7 @@ module load apptainer
 module load StdEnv/2023
 module load gcc/12.3
 module load openmpi/4.1.5
-module load cuda/12.2
+module load cuda/12.6
 module load amber-pmemd/24.3
 module load ambertools/25.0
 
