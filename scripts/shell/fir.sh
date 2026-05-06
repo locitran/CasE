@@ -24,7 +24,7 @@ echo "cuda devices   = ${CUDA_VISIBLE_DEVICES:-N/A}"
 # -------------------------
 # Environment setup
 # -------------------------
-module --force purge
+module purge
 module load apptainer
 module load StdEnv/2023
 module load gcc/12.3
