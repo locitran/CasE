@@ -2,4 +2,6 @@ data/input
 data/output
 data/fir/*/wt_md/
 data/fir/*/mut_md/
+data/fir/*/wt/wt_model.pdb
+data/fir/*/mut/mut_model.pdb
 slurm_log
