@@ -1,0 +1,84 @@
+#Heating Stage
+#Type of Simulation Being Done: Heating,
+ &cntrl
+  ntxo=2, IOUTFM=1, !NetCDF Binary Format.
+  imin=0, !MD Simulation
+  irest=0, !Do NOT Restart the Simulation; instead, run as a NEW Simulation
+  ig=-1, !Pseudo-random number seed is changed with every run.
+  ntx=1, !Coordinates, but no Velocities, will be read. Formatted (ASCII) coordinate file is expected
+  nstlim=5000000, !Number of MD-steps to be performed. Default 1.
+  dt=0.00200, !The time step (psec). Recommended MAXIMUM is .002 if SHAKE is used, or .001 if SHAKE is NOT used
+  cut=10.00000, !Cut Off Distance for Non-Bounded Interactions
+  ntb=1, !Constant Volume (default when igb and ntp are both 0)
+  igb=0, !No Generalized Born
+  ntp=0, !No pressure scaling (Default)
+  ntf=2, !Bond Interactions involving H-atoms omitted
+  ntc=2, !Bonds involving Hydrogen are Constrained
+  ntpr=50000, !Every 100 steps, energy information will be printed in human-readable form to files "mdout" and "mdinfo"
+  ntwx=50000, !Every 100 steps, the coordinates will be written to the mdcrd file
+  ntwr=50000, !Every 1000 steps during dynamics, the restart file will be written, ensuring that recovery from a crash will not be so painful. #If ntwr < 0, a unique copy of the file, "restrt_<nstep>", is written every abs(ntwr) steps
+  ntt=3, !Use Langevin Dynamics with the Collision Frequency GAMA given by gamma_ln,
+  gamma_ln=2.00000, !Collision Frequency, ps ^ (-1)
+  !temp0=310.00000, !Reference temperature at which the system is to be kept
+  tempi=50.00000, !Initial Temperature
+  restraintmask="@CA", !Atoms to be Restrained are specified by a restraintmask
+  restraint_wt=5.00, !Force Constant for Restraint, kcal/(mol * A^2)
+  nmropt=1, !NMR Restraints and weight changes will be read
+/
+&wt type='TEMP0', istep1=0, istep2=89285, value1=50.0, value2=55.0, /
+&wt type='TEMP0', istep1=89285, istep2=178570, value1=55.0, value2=60.0, /
+&wt type='TEMP0', istep1=178570, istep2=267855, value1=60.0, value2=65.0, /
+&wt type='TEMP0', istep1=267855, istep2=357140, value1=65.0, value2=70.0, /
+&wt type='TEMP0', istep1=357140, istep2=446425, value1=70.0, value2=75.0, /
+&wt type='TEMP0', istep1=446425, istep2=535710, value1=75.0, value2=80.0, /
+&wt type='TEMP0', istep1=535710, istep2=624995, value1=80.0, value2=85.0, /
+&wt type='TEMP0', istep1=624995, istep2=714280, value1=85.0, value2=90.0, /
+&wt type='TEMP0', istep1=714280, istep2=803565, value1=90.0, value2=95.0, /
+&wt type='TEMP0', istep1=803565, istep2=892850, value1=95.0, value2=100.0, /
+&wt type='TEMP0', istep1=892850, istep2=982135, value1=100.0, value2=105.0, /
+&wt type='TEMP0', istep1=982135, istep2=1071420, value1=105.0, value2=110.0, /
+&wt type='TEMP0', istep1=1071420, istep2=1160705, value1=110.0, value2=115.0, /
+&wt type='TEMP0', istep1=1160705, istep2=1249990, value1=115.0, value2=120.0, /
+&wt type='TEMP0', istep1=1249990, istep2=1339275, value1=120.0, value2=125.0, /
+&wt type='TEMP0', istep1=1339275, istep2=1428560, value1=125.0, value2=130.0, /
+&wt type='TEMP0', istep1=1428560, istep2=1517845, value1=130.0, value2=135.0, /
+&wt type='TEMP0', istep1=1517845, istep2=1607130, value1=135.0, value2=140.0, /
+&wt type='TEMP0', istep1=1607130, istep2=1696415, value1=140.0, value2=145.0, /
+&wt type='TEMP0', istep1=1696415, istep2=1785700, value1=145.0, value2=150.0, /
+&wt type='TEMP0', istep1=1785700, istep2=1874985, value1=150.0, value2=155.0, /
+&wt type='TEMP0', istep1=1874985, istep2=1964270, value1=155.0, value2=160.0, /
+&wt type='TEMP0', istep1=1964270, istep2=2053555, value1=160.0, value2=165.0, /
+&wt type='TEMP0', istep1=2053555, istep2=2142840, value1=165.0, value2=170.0, /
+&wt type='TEMP0', istep1=2142840, istep2=2232125, value1=170.0, value2=175.0, /
+&wt type='TEMP0', istep1=2232125, istep2=2321410, value1=175.0, value2=180.0, /
+&wt type='TEMP0', istep1=2321410, istep2=2410695, value1=180.0, value2=185.0, /
+&wt type='TEMP0', istep1=2410695, istep2=2499980, value1=185.0, value2=190.0, /
+&wt type='TEMP0', istep1=2499980, istep2=2589265, value1=190.0, value2=195.0, /
+&wt type='TEMP0', istep1=2589265, istep2=2678550, value1=195.0, value2=200.0, /
+&wt type='TEMP0', istep1=2678550, istep2=2767835, value1=200.0, value2=205.0, /
+&wt type='TEMP0', istep1=2767835, istep2=2857120, value1=205.0, value2=210.0, /
+&wt type='TEMP0', istep1=2857120, istep2=2946405, value1=210.0, value2=215.0, /
+&wt type='TEMP0', istep1=2946405, istep2=3035690, value1=215.0, value2=220.0, /
+&wt type='TEMP0', istep1=3035690, istep2=3124975, value1=220.0, value2=225.0, /
+&wt type='TEMP0', istep1=3124975, istep2=3214260, value1=225.0, value2=230.0, /
+&wt type='TEMP0', istep1=3214260, istep2=3303545, value1=230.0, value2=235.0, /
+&wt type='TEMP0', istep1=3303545, istep2=3392830, value1=235.0, value2=240.0, /
+&wt type='TEMP0', istep1=3392830, istep2=3482115, value1=240.0, value2=245.0, /
+&wt type='TEMP0', istep1=3482115, istep2=3571400, value1=245.0, value2=250.0, /
+&wt type='TEMP0', istep1=3571400, istep2=3660685, value1=250.0, value2=255.0, /
+&wt type='TEMP0', istep1=3660685, istep2=3749970, value1=255.0, value2=260.0, /
+&wt type='TEMP0', istep1=3749970, istep2=3839255, value1=260.0, value2=265.0, /
+&wt type='TEMP0', istep1=3839255, istep2=3928540, value1=265.0, value2=270.0, /
+&wt type='TEMP0', istep1=3928540, istep2=4017825, value1=270.0, value2=275.0, /
+&wt type='TEMP0', istep1=4017825, istep2=4107110, value1=275.0, value2=280.0, /
+&wt type='TEMP0', istep1=4107110, istep2=4196395, value1=280.0, value2=285.0, /
+&wt type='TEMP0', istep1=4196395, istep2=4285680, value1=285.0, value2=290.0, /
+&wt type='TEMP0', istep1=4285680, istep2=4374965, value1=290.0, value2=295.0, /
+&wt type='TEMP0', istep1=4374965, istep2=4464250, value1=295.0, value2=300.0, /
+&wt type='TEMP0', istep1=4464250, istep2=4553535, value1=300.0, value2=305.0, /
+&wt type='TEMP0', istep1=4553535, istep2=4642820, value1=305.0, value2=310.0, /
+&wt type='TEMP0', istep1=4642820, istep2=4732105, value1=310.0, value2=315.0, /
+&wt type='TEMP0', istep1=4732105, istep2=4821390, value1=315.0, value2=320.0, /
+&wt type='TEMP0', istep1=4821390, istep2=4910675, value1=320.0, value2=315.0, /
+&wt type='TEMP0', istep1=4910675, istep2=4999960, value1=315.0, value2=310.0, /
+&wt type='END' /

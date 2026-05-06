@@ -2,6 +2,9 @@
 echo "Starting MMGBSA run at $(date)"
 start=$(date +%s)  # Record start time in minutes
 
+complex_range=1-383
+peptide_range=374-383
+
 # Wrapping the trajectory
 # ========wrap.in=============
 cat > "$cpptraj/wrap.in" <<EOF

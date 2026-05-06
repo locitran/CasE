@@ -1,0 +1,27 @@
+#Heating Stage
+#Type of Simulation Being Done: Heating,
+ &cntrl
+  ntxo=2, IOUTFM=1, !NetCDF Binary Format.
+  imin=0, !MD Simulation
+  irest=0, !Do NOT Restart the Simulation; instead, run as a NEW Simulation
+  ig=-1, !Pseudo-random number seed is changed with every run.
+  ntx=1, !Coordinates, but no Velocities, will be read. Formatted (ASCII) coordinate file is expected
+  nstlim=5000000, !Number of MD-steps to be performed. Default 1.
+  dt=0.00200, !The time step (psec). Recommended MAXIMUM is .002 if SHAKE is used, or .001 if SHAKE is NOT used
+  cut=10.00000, !Cut Off Distance for Non-Bounded Interactions
+  ntb=1, !Constant Volume (default when igb and ntp are both 0)
+  igb=0, !No Generalized Born
+  ntp=0, !No pressure scaling (Default)
+  ntf=2, !Bond Interactions involving H-atoms omitted
+  ntc=2, !Bonds involving Hydrogen are Constrained
+  ntpr=50000, !Every 100 steps, energy information will be printed in human-readable form to files "mdout" and "mdinfo"
+  ntwx=50000, !Every 100 steps, the coordinates will be written to the mdcrd file
+  ntwr=50000, !Every 1000 steps during dynamics, the restart file will be written, ensuring that recovery from a crash will not be so painful. #If ntwr < 0, a unique copy of the file, "restrt_<nstep>", is written every abs(ntwr) steps
+  ntt=3, !Use Langevin Dynamics with the Collision Frequency GAMA given by gamma_ln,
+  gamma_ln=2.00000, !Collision Frequency, ps ^ (-1)
+  !temp0=310.00000, !Reference temperature at which the system is to be kept
+  tempi=50.00000, !Initial Temperature
+  restraintmask="@CA", !Atoms to be Restrained are specified by a restraintmask
+  restraint_wt=5.00, !Force Constant for Restraint, kcal/(mol * A^2)
+  nmropt=1, !NMR Restraints and weight changes will be read
+/

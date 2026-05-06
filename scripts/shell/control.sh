@@ -95,27 +95,27 @@ for sample in HLA-B-EDEDEDEDE ; do
 
   ###############################################################################
   # System preparation
-  if [[ -f "$outdir/noh_propka.pdb" ]]; then
-    echo "Found existing $outdir/noh_propka.pdb; skipping pdb4amber.sh"
-  else
-    source $workdir/scripts/shell/pdb4amber.sh
-  fi
-  source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
-  source $workdir/scripts/shell/tleap.sh
+  # if [[ -f "$outdir/noh_propka.pdb" ]]; then
+  #   echo "Found existing $outdir/noh_propka.pdb; skipping pdb4amber.sh"
+  # else
+  #   source $workdir/scripts/shell/pdb4amber.sh
+  # fi
+  # source $workdir/scripts/shell/selection.sh  # $complex_range $peptide_range
+  # source $workdir/scripts/shell/tleap.sh
 
-  # Create configuration files (.in)
-  python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
+  # # Create configuration files (.in)
+  # python $workdir/scripts/python/create_config.py -n $config -p $topfile -c $coordfile -s $outdir/noh_propka.pdb
 
-  # # Run MD
-  cd $md_NPT
-  source $workdir/scripts/shell/md.sh
+  # # # Run MD
+  # cd $md_NPT
+  # source $workdir/scripts/shell/md.sh
 
-  # Run check MD results
-  source $workdir/scripts/shell/check.sh
+  # # Run check MD results
+  # source $workdir/scripts/shell/check.sh
 
-  # # Run Analysis
-  cd $analysis
-  source $workdir/scripts/shell/analysis.sh
+  # # # Run Analysis
+  # cd $analysis
+  # source $workdir/scripts/shell/analysis.sh
 
   # # Run MMGBSA
   mkdir -p $mmgbsa/temp

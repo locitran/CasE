@@ -38,3 +38,26 @@ squeue -u $USER
 tail -f case_wt_md-<jobid>.out
 tail -f case_wt_md-<jobid>.err
 ```
+
+# Copy data to FIR with scp
+
+If SSH reports `Host key verification failed`, first verify and add the remote host key:
+
+```bash
+ssh-keyscan -t ed25519 140.114.97.192
+ssh-keygen -lf <(ssh-keyscan -t ed25519 140.114.97.192 2>/dev/null)
+ssh-keyscan -t ed25519 140.114.97.192 >> ~/.ssh/known_hosts
+```
+
+After confirming the fingerprint is correct, copy from the repo root:
+
+```bash
+cd ~/scratch/CasE
+scp -r yang_loci@140.114.97.192:/mnt/nas_1/YangLab/loci/casE/data/output/CasE_14_P2V1 ./data/output/
+```
+
+If you are already inside `~/scratch/CasE/data`, use:
+
+```bash
+scp -r yang_loci@140.114.97.192:/mnt/nas_1/YangLab/loci/casE/data/output/CasE_14_P2V1 ./output/
+```

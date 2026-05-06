@@ -24,9 +24,14 @@ echo "cuda devices   = ${CUDA_VISIBLE_DEVICES:-N/A}"
 # -------------------------
 # Environment setup
 # -------------------------
-module purge
+module --force purge
 module load apptainer
-module load StdEnv/2023 gcc/12.3 openmpi/4.1.5 cuda/12.6 amber-pmemd/24.3
+module load StdEnv/2023
+module load gcc/12.3
+module load openmpi/4.1.5
+module load cuda/12.2
+module load amber-pmemd/24.3
+module load ambertools/25.0
 
 venv_path=~/scratch/case-venv/bin/activate
 if [[ ! -s "$venv_path" ]]; then
@@ -84,17 +89,13 @@ run_container() {
   fi
 }
 
-for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3; do
+for variant in CasE_14_P2V1 CasE_14_P2V2 CasE_14_P2V3 CasE_14_P2V4 CasE_14_P2V5; do
   export variant
-  input_dir=$workdir/data/input/af/$variant
-  output_dir=$workdir/data/output/$variant
-
   for type in wt mut; do
-    input_cif=$workdir/data/output/$variant/$type/"$type"_model.cif
-    input_pdb=$workdir/data/output/$variant/$type/"$type"_model.pdb
+    input_cif=$workdir/data/fir/$variant/$type/"$type"_model.cif
+    input_pdb=$workdir/data/fir/$variant/$type/"$type"_model.pdb
 
-    outdir=$workdir/data/output/$variant/"$type"_md
-    mkdir -p "$output_dir"
+    outdir=$workdir/data/fir/$variant/"$type"_md
 
     console=$outdir/console
     cpptraj=$outdir/cpptraj
