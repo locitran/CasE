@@ -70,3 +70,9 @@ Run this on FIR to copy `CasE_14_P2V1` back to the A100 repo:
 scp -r /home/locitran/scratch/CasE/data/fir/CasE_14_P2V1 \
   yang_loci@140.114.97.192:/mnt/nas_1/YangLab/loci/casE/data/fir/
 ```
+
+# 2 tasks
+# 4 cpus / task --> 8 cpus
+
+#SBATCH --ntasks=8                          # MPI tasks
+#SBATCH --cpus-per-task=4                  # CPUs per task

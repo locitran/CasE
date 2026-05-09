@@ -54,6 +54,9 @@ run_md_stage() {
 }
 
 run_md_stage "min0" "$em/min0.log" "$config/min0.in" "$topfile" "$coordfile" -- \
+  pmemd.MPI -O -i "$config/min0.in" -p "$topfile" -c "$coordfile" -ref "$coordfile" -o "$em/min0.out" -r "$em/min0.rst" -x "$em/min0.nc" -inf "$em/min0.info"
+
+run_md_stage "min0" "$em/min0.log" "$config/min0.in" "$topfile" "$coordfile" -- \
   pmemd.cuda_DPFP -O -i "$config/min0.in" -p "$topfile" -c "$coordfile" -ref "$coordfile" -o "$em/min0.out" -r "$em/min0.rst" -x "$em/min0.nc" -inf "$em/min0.info"
 
 run_md_stage "min1" "$em/min1.log" "$config/min1.in" "$topfile" "$em/min0.rst" -- \

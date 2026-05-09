@@ -1,4 +1,15 @@
 #!/bin/bash
+#SBATCH --job-name=case_wt_md
+#SBATCH --account=def-mikeuoft          # <-- change to your allocation
+#SBATCH --time=0-1:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=4
+#SBATCH --mem=10000M
+#SBATCH --output=%x-%j.out
+#SBATCH --error=%x-%j.err
+
+#!/bin/bash
 set -euo pipefail
 
 if [[ $# -lt 2 || $# -gt 3 ]]; then
